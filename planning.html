@@ -2,43 +2,55 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planning de Vidage - Éco-délégués</title>
-  <link rel="stylesheet" href="styles/style.css">
+  <title>Planning de Vidage</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <div class="header-content">
-    <img src="img/logo-etab.png">
+    <img src="etablissement.png" alt="Logo établissement" class="logo">
     <h1>Planning de Vidage des Boîtes de Brouillon</h1>
-    </div>
     <nav>
       <a href="index.html">Accueil</a>
       <a href="planning.html">Planning</a>
     </nav>
   </header>
+
   <main>
-    <section>
-      <h2>Ajouter une entrée</h2>
-      <input type="date" id="date">
-      <input type="text" id="noms" placeholder="Nom de(s) élève(s)">
-      <button onclick="ajouterEntree()">Ajouter</button>
-      <button onclick="sauvegarder()">Sauvegarder les données</button>
-    </section>
-    <section>
-      <h2>Planning</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Élèves responsables</th>
-            <th>Supprimer</th>
-          </tr>
-        </thead>
-        <tbody id="planning"></tbody>
-      </table>
-    </section>
-    <script src="scripts/planning.js"></script>
+    <h2>Ajouter un élève au planning</h2>
+    <form>
+      <label for="date">Date :</label>
+      <input type="date" id="date" required>
+
+      <label for="nom">Nom :</label>
+      <input type="text" id="nom" placeholder="Nom prénom" required>
+
+      <label for="classe">Classe :</label>
+      <select id="classe" required>
+        <option value="">-- Choisir --</option>
+        <option>6A</option><option>6B</option><option>6C</option>
+        <option>5A</option><option>5B</option><option>5C</option>
+        <option>4A</option><option>4B</option><option>4C</option>
+        <option>3A</option><option>3B</option><option>3C</option>
+      </select>
+
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <h2>Planning</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Nom</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rempli dynamiquement par JS -->
+      </tbody>
+    </table>
   </main>
+
+  <script src="planning.js"></script>
 </body>
 </html>
