@@ -11,7 +11,7 @@ function afficherPlanning(planning) {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${entry.date}</td>
-      <td>${entry.nom}</td>
+      <td>${entry.nom} (${entry.classe})</td>
       <td><button data-index="${index}">Supprimer</button></td>
     `;
     tbody.appendChild(row);
@@ -23,13 +23,14 @@ document.querySelector("form").addEventListener("submit", (e) => {
   e.preventDefault();
   const date = document.getElementById("date").value;
   const nom = document.getElementById("nom").value;
+  const classe = document.getElementById("classe").value;
 
-  if (!date || !nom.trim()) return;
+  if (!date || !nom.trim() || !classe) return;
 
   fetch("planning.json")
     .then(res => res.json())
     .then(planning => {
-      planning.push({ date, nom });
+      planning.push({ date, nom, classe });
       return fetch("save.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
