@@ -1,45 +1,58 @@
-let planning = JSON.parse(localStorage.getItem("roulement") || "[]");
-const tbody = document.getElementById("planning");
+// Chargement initial du planning
+fetch("planning.json")
+  .then(res => res.json())
+  .then(planning => afficherPlanning(planning));
 
-function afficherPlanning() {
+// Affichage dans le tableau
+function afficherPlanning(planning) {
+  const tbody = document.querySelector("table tbody");
   tbody.innerHTML = "";
-  planning.forEach((e, index) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${e.date}</td>
-      <td>${e.eleves}</td>
-      <td><button onclick="supprimerEntree(${index})">Supprimer</button></td>
+  planning.forEach((entry, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${entry.date}</td>
+      <td>${entry.nom}</td>
+      <td><button data-index="${index}">Supprimer</button></td>
     `;
-    tbody.appendChild(tr);
+    tbody.appendChild(row);
   });
 }
 
-function ajouterEntree() {
+// Ajout d’un élève
+document.querySelector("form").addEventListener("submit", (e) => {
+  e.preventDefault();
   const date = document.getElementById("date").value;
-  const noms = document.getElementById("noms").value.trim();
-  if (!date || !noms) return;
-  planning.push({ date, eleves: noms });
-  localStorage.setItem("roulement", JSON.stringify(planning));
-  afficherPlanning();
-  document.getElementById("date").value = "";
-  document.getElementById("noms").value = "";
-}
+  const nom = document.getElementById("nom").value;
 
-function supprimerEntree(index) {
-  planning.splice(index, 1);
-  localStorage.setItem("roulement", JSON.stringify(planning));
-  afficherPlanning();
-}
+  if (!date || !nom.trim()) return;
 
-function sauvegarder() {
-  const blob = new Blob([JSON.stringify(planning, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "planning_brouillons.json";
-  a.click();
-  URL.revokeObjectURL(url);
-}
+  fetch("planning.json")
+    .then(res => res.json())
+    .then(planning => {
+      planning.push({ date, nom });
+      return fetch("save.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(planning)
+      });
+    })
+    .then(() => location.reload());
+});
 
-afficherPlanning();
-
+// Suppression d’un élève
+document.querySelector("table").addEventListener("click", (e) => {
+  if (e.target.tagName === "BUTTON") {
+    const index = e.target.dataset.index;
+    fetch("planning.json")
+      .then(res => res.json())
+      .then(planning => {
+        planning.splice(index, 1);
+        return fetch("save.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(planning)
+        });
+      })
+      .then(() => location.reload());
+  }
+});
